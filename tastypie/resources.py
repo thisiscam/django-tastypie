@@ -85,6 +85,7 @@ class ResourceOptions(object):
     always_return_data = False
     collection_name = 'objects'
     detail_uri_name = 'pk'
+    readonly_fields = None
 
     def __new__(cls, meta=None):
         overrides = {}
@@ -179,6 +180,9 @@ class Resource(six.with_metaclass(DeclarativeMetaclass)):
 
         if not api_name is None:
             self._meta.api_name = api_name
+
+        for f in self._meta.readonly_fields or []:
+            self.fields[f].readonly = True
 
     def __getattr__(self, name):
         if name in self.fields:
