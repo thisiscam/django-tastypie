@@ -859,7 +859,11 @@ class Resource(six.with_metaclass(DeclarativeMetaclass)):
             method = getattr(self, "dehydrate_%s" % field_name, None)
 
             if method:
-                bundle.data[field_name] = method(bundle)
+                dehydrated_data = method(bundle)
+                if not dehydrated_data: #if the data is None, delete it entirely
+                    del bundle.data[field_name]
+                else:
+                    bundle.data[field_name] = dehydrated_data
 
         bundle = self.dehydrate(bundle)
         return bundle
